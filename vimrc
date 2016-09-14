@@ -55,11 +55,12 @@
     set mouse=a            " Enable mouse usage (all modes)    "使用鼠标
     set number            " Enable line number    "显示行号
     "set previewwindow    " 标识预览窗口
-    set history=50        " set command history to 50    "历史记录50条
+    set history=1000        " set command history to 1000    
 
 
     "--状态行设置--
     set laststatus=2 " 总显示最后一个窗口的状态行；设为1则窗口数多于一个的时候显示最后一个窗口的状态行；0不显示最后一个窗口的状态行
+	set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P>
     set ruler            " 标尺，用于显示光标位置的行号和列号，逗号分隔。每个窗口都有自己的标尺。如果窗口有状态行，标尺在那里显示。否则，它显示在屏幕的最后一行上。
 
     "--命令行设置--
@@ -73,9 +74,9 @@
 
 	"-- omnicppcomplete setting --
 	"" 按下F8自动补全代码，注意该映射语句后不能有其他字符，包括tab；否则按下F8会自动补全一些乱码
-	imap <F8> <C-X><C-O>
+	"imap <F8> <C-X><C-O>
 	" 按下F2根据头文件内关键字补全
-	imap <F2> <C-X><C-I>
+	"imap <F2> <C-X><C-I>
 	set completeopt=menu,menuone " 关掉智能补全时的预览窗口
 	let OmniCpp_MayCompleteDot = 1 " autocomplete with .
 	let OmniCpp_MayCompleteArrow = 1 " autocomplete with ->
@@ -131,9 +132,13 @@
 
 	"-- WinManager setting --
 	let g:winManagerWindowLayout='FileExplorer|TagList' "
+	let g:winManagerWidth = 30
+	let g:defaultExplorer = 0
+	nmap <C-W><C-F> :FirstExplorerWindow<cr>
+	nmap <C-W><C-B> :BottomExplorerWindow<cr>
+	nmap <silent> <leader>wm :WMToggle<cr> 
     "设置我们要管理的插件
     let g:persistentBehaviour=0 " 如果所有编辑文件都关闭了，退出vim
-    "nmap wm :WMToggle<cr>
 	"映射F7为功能键调出winmanager的文件浏览器
 	"映射双击F7调出Taglist的符号浏览器
 	map <F7> :WMToggle<cr>
@@ -152,18 +157,19 @@
 	nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
 	nmap <C-\>i :cs find i <C-R>=expand("<cfile>")<CR><CR> :copen<CR><CR>
 	function Do_CsTag()
-		silent! execute "!ctags -R ‘.’"
-		if(executable(‘cscope’) && has("cscope") )
-			silent! execute "!find -L `pwd` -name ‘*.h’ -o -name ‘*.c’ -o -name ‘*.cpp’ -o -name ‘*.java’ -o -name ‘*.cs’ -o     -name ‘*.cxx’ -o -name ‘*.hxx’> cscope.files -o -name ‘*.hpp’ -o -name ‘*.py’"    endif
+		silent! execute "!ctags -R '.'"
+		if (executable('cscope') && has("cscope"))
+			silent! execute "!find -L `pwd` -name '*.h' -o -name '*.c' -o -name '*.cpp' -o -name '*.java' -o -name '*.cs' -o -name '*.cxx' -o -name '*.hxx' -o -name '*.hpp' -o -name '*.py' > cscope.files" 
+		endif
 		silent! execute "!cscope -bq"
 		silent! execute "call Add_CsTag()"
-	endf
+	endfun
 	function Add_CsTag()
 		if filereadable("cscope.out")
 			execute "cs add cscope.out"
 			execute "set tags+=./tags"
 		endif
-	endf
+	endfun
 	silent! execute "call Add_CsTag()"
 	
     "-- QuickFix setting --
@@ -193,3 +199,23 @@
     "let g:miniBufExplMapCTabSwitchWindows = 1 " 启用以下两个功能：Ctrl+tab移到下一个窗口；Ctrl+Shift+tab移到上一个窗口；ubuntu好像不支持
     let g:miniBufExplModSelTarget = 1    " 不要在不可编辑内容的窗口（如TagList窗口）中打开选中的buffer
 	
+	"---- NERDTree -----
+	autocmd vimenter * NERDTree " 打开vim自动加载
+	map <F2> :NERDTreeToggle<CR>
+	map <C-F2> :NERDTreeFind<CR>
+	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif "nerdtree最后一个窗口自动关闭
+	let NERDTreeShowBookmarks=1 "默认显示bookmark
+	let NERDTreeQuitOnOpen=1 "打开文件时关闭树
+	"设置tab的快捷键
+	"Shift+t为跳转标签
+	map <S-t> :tabnext<CR>
+
+	"显示tab符号
+	"set list
+	set listchars=tab:>-,trail:-
+
+	"CTRLP
+	set runtimepath^=~/.vim/bundle/ctrlp.vim
+	set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " Linux/MacOSX
+
+
