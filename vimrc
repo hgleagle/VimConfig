@@ -52,8 +52,8 @@
     set linebreak        " 整词换行
     set whichwrap=b,s,<,>,[,] " 光标从行首和行末时可以跳到另一行去
     "set hidden " Hide buffers when they are abandoned
-    set mouse=a            " Enable mouse usage (all modes)    "使用鼠标
     set number            " Enable line number    "显示行号
+	set relativenumber	  " 相对行号
     "set previewwindow    " 标识预览窗口
     set history=1000        " set command history to 1000    
 
@@ -172,22 +172,22 @@
 	endfun
 	silent! execute "call Add_CsTag()"
 	
-    "-- QuickFix setting --
+    "------- QuickFix setting --
     " 按下F6，执行make clean
     map <F6> :make clean<CR><CR><CR>
-    " 按下F5，执行make编译程序，并打开quickfix窗口，显示编译信息
-    map <F5> :make<CR><CR><CR> :copen<CR><CR>
+    " 按下F2，执行make编译程序，并打开quickfix窗口，显示编译信息
+    map <F2> :make<CR><CR><CR> :copen<CR><CR>
     " 按下F3，光标移到上一个错误所在的行
     map <F3> :cp<CR>
     " 按下F4，光标移到下一个错误所在的行
     map <F4> :cn<CR>
     " 以上的映射是使上面的快捷键在插入模式下也能用
     imap <F6> <ESC>:make clean<CR><CR><CR>
-    imap <F5> <ESC>:make<CR><CR><CR> :copen<CR><CR>
+    imap <F2> <ESC>:make<CR><CR><CR> :copen<CR><CR>
     imap <F3> <ESC>:cp<CR>
     imap <F4> <ESC>:cn<CR>
 	
-    "--fold setting--
+    "-----fold setting--
     set foldmethod=syntax " 用语法高亮来定义折叠
     set foldlevel=100 " 启动vim时不要自动折叠代码
     set foldcolumn=5 " 设置折叠栏宽度
@@ -201,21 +201,72 @@
 	
 	"---- NERDTree -----
 	autocmd vimenter * NERDTree " 打开vim自动加载
-	map <F2> :NERDTreeToggle<CR>
-	map <C-F2> :NERDTreeFind<CR>
+	"map <F2> :NERDTreeToggle<CR>
+	"map <C-F2> :NERDTreeFind<CR>
+	nmap ,n :NERDTreeFind<CR>
+	nmap ,m :NERDTreeToggle<CR>
 	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif "nerdtree最后一个窗口自动关闭
 	let NERDTreeShowBookmarks=1 "默认显示bookmark
+	let NERDTreeShowHidden=1 "默认显示隐藏文件
 	let NERDTreeQuitOnOpen=1 "打开文件时关闭树
+	let NERDTreeChDirMode=2 "修改root时改变CWD目录		
+	let NERDTreeHighlightCursorline=1 "高亮
 	"设置tab的快捷键
 	"Shift+t为跳转标签
-	map <S-t> :tabnext<CR>
+	"map <S-t> :tabnext<CR>
 
 	"显示tab符号
 	"set list
 	set listchars=tab:>-,trail:-
 
-	"CTRLP
+	let mapleader = ","
+
+	"USB and SX1257/SX1255 RF transceivers.CTRLP
 	set runtimepath^=~/.vim/bundle/ctrlp.vim
-	set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " Linux/MacOSX
+	"set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " Linux/MacOSX
+	let g:ctrlp_working_path_mode = 'ra'
+	let g:ctrlp_max_files = 0
+	let g:ctrlp_max_depth = 40
+	let g:ctrlp_mruf_max = 500
+	let g:ctrlp_by_filename = 1
+	nnoremap <silent> <leader>f :CtrlPMixed<CR>
+	let g:ctrlp_custom_ignore = {
+	  \ 'dir':  '\v[\/]\.(git|hg|svn|pc)$',
+      \ 'file': '\v\.(exe|so|dll|o|cmd|swp|zip)$',
+	  \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
+      \ }
+	" Bind C-t for Clear all cache and open CtrlP
+	" nnoremap <silent> <C-h> :ClearAllCtrlPCache<CR>\|:CtrlP<CR>
 
+	nmap <silent> <leader>e :edit ~/.vimrc<CR>
+	nmap <silent> <leader>s :source ~/.vimrc<CR>
+	set scrolloff=18	"光标距离顶端18行移动屏幕
+	"强行写入
+	cnoremap w!! w !sudo tee >/dev/null % 
+	"如上设置是vim可以识别utf-8和gbk的文件
+	set encoding=utf-8
+	set tenc=utf-8
+	set fileencodings=utf-8,cp936 
+	" 当遇到没有行号的行时，gj/gk命令会使光标按虚拟行移动，而当遇到有行号的行时，光标则按物理行移动,和相对行号匹配
+	noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
+	noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 
+	" 粘贴模式，防止格式错乱
+	set pastetoggle=<f11>
+
+    " set mouse=a            " Enable mouse usage (all modes)    "使用鼠标
+	set mouse=c		" command mode
+	"{{{ Mouse Toggle
+	let mouse_mode = 0 " 0 = c, 1 = a
+	func! Mouse_on_off()
+	   if g:mouse_mode == 0
+	      let g:mouse_mode = 1
+	      set mouse=c
+	   else
+	      let g:mouse_mode = 0
+	      set mouse=a
+	   endif
+	   return
+	endfunc
+	"}}}
+	nnoremap <C-m> :call Mouse_on_off()<CR>
