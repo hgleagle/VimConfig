@@ -51,6 +51,7 @@ OmniCpp_SelectFirstItem	omnicppcomplete.txt	/*OmniCpp_SelectFirstItem*
 OmniCpp_ShowAccess	omnicppcomplete.txt	/*OmniCpp_ShowAccess*
 OmniCpp_ShowPrototypeInAbbr	omnicppcomplete.txt	/*OmniCpp_ShowPrototypeInAbbr*
 OmniCpp_ShowScopeInAbbr	omnicppcomplete.txt	/*OmniCpp_ShowScopeInAbbr*
+Tlist_Get_Filenames()	taglist.txt	/*Tlist_Get_Filenames()*
 Tlist_Get_Tag_Prototype_By_Line()	taglist.txt	/*Tlist_Get_Tag_Prototype_By_Line()*
 Tlist_Get_Tagname_By_Line()	taglist.txt	/*Tlist_Get_Tagname_By_Line()*
 Tlist_Set_App()	taglist.txt	/*Tlist_Set_App()*

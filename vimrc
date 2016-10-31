@@ -186,9 +186,12 @@
     imap <F2> <ESC>:make<CR><CR><CR> :copen<CR><CR>
     imap <F3> <ESC>:cp<CR>
     imap <F4> <ESC>:cn<CR>
+	nnoremap <leader>a :cclose<CR>
+
 	
     "-----fold setting--
-    set foldmethod=syntax " 用语法高亮来定义折叠
+    "set foldmethod=syntax " 用语法高亮来定义折叠,跟neocomplete冲突
+	set foldmethod=indent
     set foldlevel=100 " 启动vim时不要自动折叠代码
     set foldcolumn=5 " 设置折叠栏宽度
 	
@@ -199,12 +202,14 @@
     "let g:miniBufExplMapCTabSwitchWindows = 1 " 启用以下两个功能：Ctrl+tab移到下一个窗口；Ctrl+Shift+tab移到上一个窗口；ubuntu好像不支持
     let g:miniBufExplModSelTarget = 1    " 不要在不可编辑内容的窗口（如TagList窗口）中打开选中的buffer
 	
+	let mapleader = ","
+	
 	"---- NERDTree -----
 	autocmd vimenter * NERDTree " 打开vim自动加载
 	"map <F2> :NERDTreeToggle<CR>
 	"map <C-F2> :NERDTreeFind<CR>
-	nmap ,n :NERDTreeFind<CR>
-	nmap ,m :NERDTreeToggle<CR>
+	nmap <leader>n :NERDTreeFind<CR>
+	nmap <leader>m :NERDTreeToggle<CR>
 	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif "nerdtree最后一个窗口自动关闭
 	let NERDTreeShowBookmarks=1 "默认显示bookmark
 	let NERDTreeShowHidden=1 "默认显示隐藏文件
@@ -219,7 +224,6 @@
 	"set list
 	set listchars=tab:>-,trail:-
 
-	let mapleader = ","
 
 	"USB and SX1257/SX1255 RF transceivers.CTRLP
 	set runtimepath^=~/.vim/bundle/ctrlp.vim
@@ -252,7 +256,7 @@
 	noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 
 	" 粘贴模式，防止格式错乱
-	set pastetoggle=<f11>
+	set pastetoggle=<F5>
 
     " set mouse=a            " Enable mouse usage (all modes)    "使用鼠标
 	set mouse=c		" command mode
@@ -270,3 +274,134 @@
 	endfunc
 	"}}}
 	nnoremap <C-m> :call Mouse_on_off()<CR>
+
+	"golang vim-go
+	let g:go_disable_autoinstall = 0
+	set autowrite " writes the content of the file automatically if you call :make
+	let g:go_highlight_functions = 1
+	let g:go_highlight_methods = 1
+	let g:go_highlight_fields = 1
+	let g:go_highlight_types = 1
+	let g:go_highlight_operators = 1
+	let g:go_highlight_build_constraints = 1
+	au FileType go nmap <leader>r <Plug>(go-run)
+	au FileType go nmap <leader>b <Plug>(go-build)
+	au FileType go nmap <leader>t <Plug>(go-test)
+	au FileType go nmap <leader>c <Plug>(go-coverage)
+	au FileType go nmap <Leader>ds <Plug>(go-def-split)
+	au FileType go nmap <Leader>dv <Plug>(go-def-vertical)
+	au FileType go nmap <Leader>dt <Plug>(go-def-tab)
+	au FileType go nmap <Leader>gd <Plug>(go-doc)
+	au FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
+	au FileType go nmap <Leader>gb <Plug>(go-doc-browser)
+	au FileType go nmap <Leader>gi <Plug>(go-info)
+	au FileType go nmap <Leader>gr <Plug>(go-rename)
+	au FileType go nmap <Leader>gp <Plug>(go-implements)
+	
+
+	"neocomplete
+	"Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
+	" Disable AutoComplPop.
+	let g:acp_enableAtStartup = 0
+	" Use neocomplete.
+	let g:neocomplete#enable_at_startup = 1
+	" Use smartcase.
+	let g:neocomplete#enable_smart_case = 1
+	" Set minimum syntax keyword length.
+	let g:neocomplete#sources#syntax#min_keyword_length = 3
+	let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
+	" Define dictionary.
+	let g:neocomplete#sources#dictionary#dictionaries = {
+		\ 'default' : '',
+		\ 'vimshell' : $HOME.'/.vimshell_hist',
+		\ 'scheme' : $HOME.'/.gosh_completions'
+			\ }
+
+	" Define keyword.
+	if !exists('g:neocomplete#keyword_patterns')
+		let g:neocomplete#keyword_patterns = {}
+	endif
+	let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+	" Plugin key-mappings.
+	inoremap <expr><C-g>     neocomplete#undo_completion()
+	inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+	" Recommended key-mappings.
+	" <CR>: close popup and save indent.
+	inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+	function! s:my_cr_function()
+	  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+	  " For no inserting <CR> key.
+	  "return pumvisible() ? "\<C-y>" : "\<CR>"
+	endfunction
+	" <TAB>: completion.
+	inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+	" <C-h>, <BS>: close popup and delete backword char.
+	inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+	inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+	" Close popup by <Space>.
+	"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
+	
+	
+	" AutoComplPop like behavior.
+	"let g:neocomplete#enable_auto_select = 1
+
+	" Shell like behavior(not recommended).
+	"set completeopt+=longest
+	"let g:neocomplete#enable_auto_select = 1
+	"let g:neocomplete#disable_auto_complete = 1
+	"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+
+	" Enable omni completion.
+	autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+	autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+	autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+	autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+	" Enable heavy omni completion.
+	if !exists('g:neocomplete#sources#omni#input_patterns')
+	  let g:neocomplete#sources#omni#input_patterns = {}
+	endif
+	"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+	"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+	"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+	" For perlomni.vim setting.
+	" https://github.com/c9s/perlomni.vim
+	let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'     
+
+
+
+
+	"tagbar
+	let g:tagbar_type_go = {
+		\ 'ctagstype' : 'go',
+		\ 'kinds'     : [
+			\ 'p:package',
+			\ 'i:imports:1',
+			\ 'c:constants',
+			\ 'v:variables',
+			\ 't:types',
+			\ 'n:interfaces',
+			\ 'w:fields',
+			\ 'e:embedded',
+			\ 'm:methods',
+			\ 'r:constructor',
+			\ 'f:functions'
+		\ ],
+		\ 'sro' : '.',
+		\ 'kind2scope' : {
+			\ 't' : 'ctype',
+			\ 'n' : 'ntype'
+		\ },
+		\ 'scope2kind' : {
+			\ 'ctype' : 't',
+			\ 'ntype' : 'n'
+		\ },
+		\ 'ctagsbin'  : 'gotags',
+		\ 'ctagsargs' : '-sort -silent'
+	\ }
+	nmap <F8> :TagbarToggle<CR>
