@@ -90,3 +90,6 @@ export http_proxy="127.0.0.1:8118"
 export https_proxy="127.0.0.1:8118"
 [	-f	~/.bashrc_docker	]	&&	.	~/.bashrc_docker
 export GOPATH=/home/hgl/gowork
+export PATH=$PATH:$GOPATH/bin
+tmux attach -t base || tmux new -s base
+keynav

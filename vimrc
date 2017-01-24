@@ -174,19 +174,21 @@
 	
     "------- QuickFix setting --
     " 按下F6，执行make clean
-    map <F6> :make clean<CR><CR><CR>
-    " 按下F2，执行make编译程序，并打开quickfix窗口，显示编译信息
-    map <F2> :make<CR><CR><CR> :copen<CR><CR>
+    "map <F6> :make clean<CR><CR><CR>
+    " 按下F5，执行make编译程序，并打开quickfix窗口，显示编译信息
+    map <F5> :make<CR><CR><CR> :copen<CR><CR>
     " 按下F3，光标移到上一个错误所在的行
     map <F3> :cp<CR>
     " 按下F4，光标移到下一个错误所在的行
     map <F4> :cn<CR>
+    map <F6> :cclose<CR>
     " 以上的映射是使上面的快捷键在插入模式下也能用
-    imap <F6> <ESC>:make clean<CR><CR><CR>
-    imap <F2> <ESC>:make<CR><CR><CR> :copen<CR><CR>
+    "imap <F6> <ESC>:make clean<CR><CR><CR>
+    imap <F5> <ESC>:make<CR><CR><CR> :copen<CR><CR>
     imap <F3> <ESC>:cp<CR>
     imap <F4> <ESC>:cn<CR>
-	nnoremap <leader>a :cclose<CR>
+    imap <F6> <ESC>:cclose<CR>
+	"nnoremap <leader>a :cclose<CR>
 
 	
     "-----fold setting--
@@ -205,7 +207,7 @@
 	let mapleader = ","
 	
 	"---- NERDTree -----
-	autocmd vimenter * NERDTree " 打开vim自动加载
+	"autocmd vimenter * NERDTree " 打开vim自动加载
 	"map <F2> :NERDTreeToggle<CR>
 	"map <C-F2> :NERDTreeFind<CR>
 	nmap <leader>n :NERDTreeFind<CR>
@@ -256,7 +258,7 @@
 	noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 
 	" 粘贴模式，防止格式错乱
-	set pastetoggle=<F5>
+	set pastetoggle=<F2>
 
     " set mouse=a            " Enable mouse usage (all modes)    "使用鼠标
 	set mouse=c		" command mode
@@ -274,6 +276,10 @@
 	endfunc
 	"}}}
 	nnoremap <C-m> :call Mouse_on_off()<CR>
+
+	hi CursorLine   cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
+	hi CursorColumn cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
+	nnoremap <Leader>a :set cursorline! cursorcolumn!<CR>
 
 	"golang vim-go
 	let g:go_disable_autoinstall = 0
