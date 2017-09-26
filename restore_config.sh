@@ -2,8 +2,8 @@
 #git clone https://hgleagle@github.com/hgleagle/VimConfig.git ~/.vim
 #chmod +x restore_config.sh
 cd ~/.vim
-git submodule init
-git submodule update
+#git submodule init
+#git submodule update
 ln -s ~/.vim/vimrc ~/.vimrc
 ln -s ~/.vim/tmux.conf ~/.tmux.conf
 rm ~/.bashrc
