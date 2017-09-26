@@ -7,9 +7,80 @@
     " options, so any other options should be set AFTER setting 'compatible'.
     set nocompatible
 
+	"vundle管理
+	filetype off
+	set rtp+=~/.vim/bundle/Vundle.vim
+	call vundle#begin()
+	Plugin 'VundleVim/Vundle.vim'
+	Plugin 'majutsushi/tagbar'
+    Plugin 'mileszs/ack.vim'
+    "Plugin 'Shougo/neocomplete.vim'
+	Plugin 'Valloric/YouCompleteMe'
+	Plugin 'ctrlpvim/ctrlp.vim'
+	Plugin 'scrooloose/nerdtree'
+	Plugin 'vim-syntastic/syntastic'
+	Plugin 'Yggdroot/indentLine' " vertical indentline
+	"Plugin 'jiangmiao/auto-pairs'
+	"Plugin 'vim-scripts/simple-pairs'
+	Plugin 'Raimondi/delimitMate'
+
+	" Track the engine.
+	Plugin 'SirVer/ultisnips'
+	" Snippets are separated from the engine. Add this if you want them:
+	Plugin 'honza/vim-snippets'
+
+	"from <<practical vim>>
+	Plugin 'bronson/vim-visual-star-search'
+	Plugin 'tpope/vim-fugitive' "git wrapper
+	Plugin 'tpope/vim-commentary' "gc 
+	Plugin 'tpope/vim-surround'
+	Plugin 'tpope/vim-unimpaired' "[l [q [b [a [t
+	Plugin 'tpope/tpope-vim-abolish' "super substitute，Subvert
+
+	"for python
+	Plugin 'python-mode/python-mode'
+	"Plugin 'nvie/vim-flake8' "PEP8 checking
+	"Plugin 'vim-scripts/indentpython.vim'
+	"Plugin 'tell-k/vim-autopep8'
+
+	Plugin 'plasticboy/vim-markdown'
+	Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+    Plugin 'fatih/vim-go'
+	Plugin 'mattn/emmet-vim'
+
+	"scheme
+	Plugin 'jnurmine/Zenburn'
+	Plugin 'altercation/vim-colors-solarized'
+	Plugin 'tomasr/molokai'
+
+
+    " plugin from http://vim-scripts.org/vim/scripts.html
+	Plugin 'python_match.vim'
+	Plugin 'matchit.zip'
+
+	call vundle#end()
+	filetype plugin indent on
+
 	"--pathogen插件管理--
-	call pathogen#infect()
-	call pathogen#helptags()
+	"call pathogen#infect()
+	"call pathogen#helptags()
+	
+    "python
+	let python_highlight_all=1
+	" au BufNewFile,BufRead *.py
+	"     \ set tabstop=4
+	"     \ set softtabstop=4
+	"     \ set shiftwidth=4
+	"     \ set textwidth=79
+	"     \ set expandtab
+	"     \ set autoindent
+	"     \ set fileformat=unix
+
+
+	au BufNewFile,BufRead *.js, *.html, *.css
+	    \ set tabstop=2
+	    \ set softtabstop=2
+	    \ set shiftwidth=2
 
     " Vim5 and later versions support syntax highlighting. Uncommenting the
     " following enables syntax highlighting by default.
@@ -19,8 +90,10 @@
     colorscheme ron        " elflord ron peachpuff default 设置配色方案，vim自带的配色方案保存在/usr/share/vim/vim72/colors目录下
 
     " detect file type
-    filetype on
+    " filetype on
     filetype plugin on
+	"runtime macros/matchit.vim "keyword jump
+	"packadd! matchit
 
     " If using a dark background within the editing area and syntax highlighting
     " turn on this option as well
@@ -56,7 +129,12 @@
 	set relativenumber	  " 相对行号
     "set previewwindow    " 标识预览窗口
     set history=1000        " set command history to 1000    
+	"set clipboard=unnamed
 
+
+	"显示tab符号
+	"set list
+	set listchars=tab:>-,trail:-
 
     "--状态行设置--
     set laststatus=2 " 总显示最后一个窗口的状态行；设为1则窗口数多于一个的时候显示最后一个窗口的状态行；0不显示最后一个窗口的状态行
@@ -71,8 +149,49 @@
     set incsearch        " 输入字符串就显示匹配点
     set hlsearch        
 
+	"--save cursor position
+	augroup resCur
+		autocmd!
+		autocmd BufReadPost * call setpos(".", getpos("'\""))
+	augroup END
+	
 
-	"-- omnicppcomplete setting --
+	" if Command-Line Mode
+
+	"----autocomplete menu like zsh
+	set wildmenu
+	set wildmode=longest,full
+
+	"---filter the command history
+	cnoremap <C-p> <Up>
+	cnoremap <C-n> <Down>
+
+	" 强行写入
+	cnoremap w!! w !sudo tee >/dev/null % 
+
+	" endif
+
+	" if Insert Mode
+	" --- allow backspacing over everthing in insert mode
+	set backspace=indent,eol,start
+	" endif
+
+	"如上设置是vim可以识别utf-8和gbk的文件
+	set encoding=utf-8
+	set tenc=utf-8
+	set fileencodings=utf-8,cp936 
+	set scrolloff=18	"光标距离顶端18行移动屏幕
+	" 当遇到没有行号的行时，gj/gk命令会使光标按虚拟行移动，而当遇到有行号的行时，光标则按物理行移动,和相对行号匹配
+	noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
+	noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
+
+    "-----fold setting--
+    "set foldmethod=syntax " 用语法高亮来定义折叠,跟neocomplete冲突
+	set foldmethod=indent
+    set foldlevel=100 " 启动vim时不要自动折叠代码
+    set foldcolumn=5 " 设置折叠栏宽度
+
+	"-------------- omnicppcomplete setting --
 	"" 按下F8自动补全代码，注意该映射语句后不能有其他字符，包括tab；否则按下F8会自动补全一些乱码
 	"imap <F8> <C-X><C-O>
 	" 按下F2根据头文件内关键字补全
@@ -90,15 +209,15 @@
 	let OmniCpp_ShowScopeInAbbr=1 " show scope in abbreviation and remove the last column
 	let OmniCpp_ShowAccess=1 
 
-	"--ctags setting--
+	"----------ctags setting--
 	"" 按下F5重新生成tag文件，并更新taglist
 	"map <F5> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 	"imap <F5> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 	set tags=tags
 	set tags+=./tags "add current directory's generated tags file
-	set tags+=~/openwrt/ap120-h/ "add new tags file(刚刚生成tags的路径，在ctags -R 生成tags文件后，不要将tags移动到别的目录，否则ctrl+］时，会提示找不到源码文件)
+	"set tags+=~/openwrt/ap120-h/ "add new tags file(刚刚生成tags的路径，在ctags -R 生成tags文件后，不要将tags移动到别的目录，否则ctrl+］时，会提示找不到源码文件)
 	
-	"-- Cscope setting --
+	"--------------- Cscope setting --
     if has("cscope")
         set csprg=/usr/bin/cscope        " 指定用来执行cscope的命令
         set csto=0                        " 设置cstag命令查找次序：0先找cscope数据库再找标签文件；1先找标签文件再找cscope数据库
@@ -145,17 +264,6 @@
 	map <F7><F7> :TlistToggle<cr>
 	
     "--ctags and cscope setting--
-	"映射F10为添加cscope和ctags
-	map <F10> :call Do_CsTag()<CR>
-	map <F10><F10> :call Add_CsTag()<CR>
-	nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR> :copen<CR><CR>
-	nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-	nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR> :copen<CR><CR>
-	nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR> :copen<CR><CR>
-	nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR> :copen<CR><CR>
-	nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR> :copen<CR><CR>
-	nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-	nmap <C-\>i :cs find i <C-R>=expand("<cfile>")<CR><CR> :copen<CR><CR>
 	function Do_CsTag()
 		silent! execute "!ctags -R '.'"
 		if (executable('cscope') && has("cscope"))
@@ -171,31 +279,48 @@
 		endif
 	endfun
 	silent! execute "call Add_CsTag()"
+	"映射F10为添加cscope和ctags
+	map <F10> :call Do_CsTag()<CR>
+	map <F10><F10> :call Add_CsTag()<CR>
+	nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR> :copen<CR><CR>
+	nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR> :copen<CR><CR>
+	nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR> :copen<CR><CR>
+	nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR> :copen<CR><CR>
+	nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR> :copen<CR><CR>
+	nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+	nmap <C-\>i :cs find i <C-R>=expand("<cfile>")<CR><CR> :copen<CR><CR>
 	
     "------- QuickFix setting --
     " 按下F6，执行make clean
     "map <F6> :make clean<CR><CR><CR>
     " 按下F5，执行make编译程序，并打开quickfix窗口，显示编译信息
-    map <F5> :make<CR><CR><CR> :copen<CR><CR>
-    " 按下F3，光标移到上一个错误所在的行
-    map <F3> :cp<CR>
-    " 按下F4，光标移到下一个错误所在的行
-    map <F4> :cn<CR>
+    "map <F5> :make<CR><CR><CR> :copen<CR><CR>
+    " 按下F3，光标移到上一个错误所在的行,use unimpaired map [q
+    " map <F3> :cp<CR>
+    " 按下F4，光标移到下一个错误所在的行,use unimpaired map ]q 
+    " map <F4> :cn<CR>
     map <F6> :cclose<CR>
     " 以上的映射是使上面的快捷键在插入模式下也能用
     "imap <F6> <ESC>:make clean<CR><CR><CR>
-    imap <F5> <ESC>:make<CR><CR><CR> :copen<CR><CR>
-    imap <F3> <ESC>:cp<CR>
-    imap <F4> <ESC>:cn<CR>
+    "imap <F5> <ESC>:make<CR><CR><CR> :copen<CR><CR>
+    "imap <F3> <ESC>:cp<CR>
+    "imap <F4> <ESC>:cn<CR>
     imap <F6> <ESC>:cclose<CR>
 	"nnoremap <leader>a :cclose<CR>
-
-	
-    "-----fold setting--
-    "set foldmethod=syntax " 用语法高亮来定义折叠,跟neocomplete冲突
-	set foldmethod=indent
-    set foldlevel=100 " 启动vim时不要自动折叠代码
-    set foldcolumn=5 " 设置折叠栏宽度
+	"按F5运行python"
+	" map <F5> :Autopep8<CR> :w<CR> :call RunPython()<CR>
+	" function RunPython()
+	" 	let mp = &makeprg
+	" 	let ef = &errorformat
+	" 	let exeFile = expand("%:t")
+	" 	setlocal makeprg=python3\ -u
+	" 	set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
+	" 	silent make %
+	" 	copen
+	" 	let &makeprg = mp
+	" 	let &errorformat = ef
+	" endfunction
 	
     " -- MiniBufferExplorer --
     let g:miniBufExplMapWindowNavVim = 1 " 按下Ctrl+h/j/k/l，可以切换到当前窗口的上下左右窗口
@@ -205,6 +330,24 @@
     let g:miniBufExplModSelTarget = 1    " 不要在不可编辑内容的窗口（如TagList窗口）中打开选中的buffer
 	
 	let mapleader = ","
+	nmap <silent> <leader>e :edit ~/.vimrc<CR>
+	nmap <silent> <leader>s :source ~/.vimrc<CR>
+
+	"------copy file path------
+	" copy current file name (relative/absolute) to system clipboard (Linux version)
+	if has("gui_gtk") || has("gui_gtk2") || has("gui_gnome") || has("unix")
+	" relative path (src/foo.txt)
+	nnoremap <leader>cf :let @+=expand("%")<CR>
+
+	" absolute path (/something/src/foo.txt)
+	nnoremap <leader>cF :let @+=expand("%:p")<CR>
+
+	" filename (foo.txt)
+	nnoremap <leader>ct :let @+=expand("%:t")<CR>
+
+	" directory name (/something/src)
+	nnoremap <leader>ch :let @+=expand("%:p:h")<CR>
+	endif
 	
 	"---- NERDTree -----
 	"autocmd vimenter * NERDTree " 打开vim自动加载
@@ -218,13 +361,10 @@
 	let NERDTreeQuitOnOpen=1 "打开文件时关闭树
 	let NERDTreeChDirMode=2 "修改root时改变CWD目录		
 	let NERDTreeHighlightCursorline=1 "高亮
+	let NERDTreeIgnore = ['\.pyc$', '\~$']
 	"设置tab的快捷键
 	"Shift+t为跳转标签
 	"map <S-t> :tabnext<CR>
-
-	"显示tab符号
-	"set list
-	set listchars=tab:>-,trail:-
 
 
 	"USB and SX1257/SX1255 RF transceivers.CTRLP
@@ -244,18 +384,6 @@
 	" Bind C-t for Clear all cache and open CtrlP
 	" nnoremap <silent> <C-h> :ClearAllCtrlPCache<CR>\|:CtrlP<CR>
 
-	nmap <silent> <leader>e :edit ~/.vimrc<CR>
-	nmap <silent> <leader>s :source ~/.vimrc<CR>
-	set scrolloff=18	"光标距离顶端18行移动屏幕
-	"强行写入
-	cnoremap w!! w !sudo tee >/dev/null % 
-	"如上设置是vim可以识别utf-8和gbk的文件
-	set encoding=utf-8
-	set tenc=utf-8
-	set fileencodings=utf-8,cp936 
-	" 当遇到没有行号的行时，gj/gk命令会使光标按虚拟行移动，而当遇到有行号的行时，光标则按物理行移动,和相对行号匹配
-	noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
-	noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 
 	" 粘贴模式，防止格式错乱
 	set pastetoggle=<F2>
@@ -282,107 +410,121 @@
 	nnoremap <Leader>a :set cursorline! cursorcolumn!<CR>
 
 	"golang vim-go
-	let g:go_disable_autoinstall = 0
-	set autowrite " writes the content of the file automatically if you call :make
-	let g:go_highlight_functions = 1
-	let g:go_highlight_methods = 1
-	let g:go_highlight_fields = 1
-	let g:go_highlight_types = 1
-	let g:go_highlight_operators = 1
-	let g:go_highlight_build_constraints = 1
-	au FileType go nmap <leader>r <Plug>(go-run)
-	au FileType go nmap <leader>b <Plug>(go-build)
-	au FileType go nmap <leader>t <Plug>(go-test)
-	au FileType go nmap <leader>c <Plug>(go-coverage)
-	au FileType go nmap <Leader>ds <Plug>(go-def-split)
-	au FileType go nmap <Leader>dv <Plug>(go-def-vertical)
-	au FileType go nmap <Leader>dt <Plug>(go-def-tab)
-	au FileType go nmap <Leader>gd <Plug>(go-doc)
-	au FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
-	au FileType go nmap <Leader>gb <Plug>(go-doc-browser)
-	au FileType go nmap <Leader>gi <Plug>(go-info)
-	au FileType go nmap <Leader>gr <Plug>(go-rename)
-	au FileType go nmap <Leader>gp <Plug>(go-implements)
+	" let g:go_disable_autoinstall = 0
+	" set autowrite " writes the content of the file automatically if you call :make
+	" let g:go_highlight_functions = 1
+	" let g:go_highlight_methods = 1
+	" let g:go_highlight_fields = 1
+	" let g:go_highlight_types = 1
+	" let g:go_highlight_operators = 1
+	" let g:go_highlight_build_constraints = 1
+	" au FileType go nmap <leader>r <Plug>(go-run)
+	" au FileType go nmap <leader>b <Plug>(go-build)
+	" au FileType go nmap <leader>t <Plug>(go-test)
+	" au FileType go nmap <leader>c <Plug>(go-coverage)
+	" au FileType go nmap <Leader>ds <Plug>(go-def-split)
+	" au FileType go nmap <Leader>dv <Plug>(go-def-vertical)
+	" au FileType go nmap <Leader>dt <Plug>(go-def-tab)
+	" au FileType go nmap <Leader>gd <Plug>(go-doc)
+	" au FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
+	" au FileType go nmap <Leader>gb <Plug>(go-doc-browser)
+	" au FileType go nmap <Leader>gi <Plug>(go-info)
+	" au FileType go nmap <Leader>gr <Plug>(go-rename)
+	" au FileType go nmap <Leader>gp <Plug>(go-implements)
 	
+	"-----------YouCompleteMe
+	let g:ycm_autoclose_preview_window_after_completion=1
+	map <leader>jd  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+	let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+	let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+	" let g:ycm_key_list_stop_completion = ['<C-y>']
 
-	"neocomplete
-	"Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
-	" Disable AutoComplPop.
-	let g:acp_enableAtStartup = 0
-	" Use neocomplete.
-	let g:neocomplete#enable_at_startup = 1
-	" Use smartcase.
-	let g:neocomplete#enable_smart_case = 1
-	" Set minimum syntax keyword length.
-	let g:neocomplete#sources#syntax#min_keyword_length = 3
-	let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+	"-----------UltiSnips
+	" Trigger configuration. Do not use <tab> if you use
+	" https://github.com/Valloric/YouCompleteMe.
+	let g:UltiSnipsExpandTrigger="<tab>"
+	let g:UltiSnipsJumpForwardTrigger="<c-b>"
+	let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
-	" Define dictionary.
-	let g:neocomplete#sources#dictionary#dictionaries = {
-		\ 'default' : '',
-		\ 'vimshell' : $HOME.'/.vimshell_hist',
-		\ 'scheme' : $HOME.'/.gosh_completions'
-			\ }
+	" If you want :UltiSnipsEdit to split your window.
+	let g:UltiSnipsEditSplit="vertical"
+	
+	" "----------neocomplete
+	" "Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
+	" " Disable AutoComplPop.
+	" let g:acp_enableAtStartup = 0
+	" " Use neocomplete.
+	" let g:neocomplete#enable_at_startup = 1
+	" " Use smartcase.
+	" let g:neocomplete#enable_smart_case = 1
+	" " Set minimum syntax keyword length.
+	" let g:neocomplete#sources#syntax#min_keyword_length = 3
+	" let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 
-	" Define keyword.
-	if !exists('g:neocomplete#keyword_patterns')
-		let g:neocomplete#keyword_patterns = {}
-	endif
-	let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+	" " Define dictionary.
+	" let g:neocomplete#sources#dictionary#dictionaries = {
+	" 	\ 'default' : '',
+	" 	\ 'vimshell' : $HOME.'/.vimshell_hist',
+	" 	\ 'scheme' : $HOME.'/.gosh_completions'
+	" 		\ }
 
-	" Plugin key-mappings.
-	inoremap <expr><C-g>     neocomplete#undo_completion()
-	inoremap <expr><C-l>     neocomplete#complete_common_string()
+	" " Define keyword.
+	" if !exists('g:neocomplete#keyword_patterns')
+	" 	let g:neocomplete#keyword_patterns = {}
+	" endif
+	" let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
-	" Recommended key-mappings.
-	" <CR>: close popup and save indent.
-	inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-	function! s:my_cr_function()
-	  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
-	  " For no inserting <CR> key.
-	  "return pumvisible() ? "\<C-y>" : "\<CR>"
-	endfunction
-	" <TAB>: completion.
-	inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-	" <C-h>, <BS>: close popup and delete backword char.
-	inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-	inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-	" Close popup by <Space>.
-	"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
+	" " Plugin key-mappings.
+	" inoremap <expr><C-g>     neocomplete#undo_completion()
+	" inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+	" " Recommended key-mappings.
+	" " <CR>: close popup and save indent.
+	" inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+	" function! s:my_cr_function()
+	"   return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+	"   " For no inserting <CR> key.
+	"   "return pumvisible() ? "\<C-y>" : "\<CR>"
+	" endfunction
+	" " <TAB>: completion.
+	" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+	" " <C-h>, <BS>: close popup and delete backword char.
+	" inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+	" inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+	" " Close popup by <Space>.
+	" "inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
 	
 	
-	" AutoComplPop like behavior.
-	"let g:neocomplete#enable_auto_select = 1
+	" " AutoComplPop like behavior.
+	" "let g:neocomplete#enable_auto_select = 1
 
-	" Shell like behavior(not recommended).
-	"set completeopt+=longest
-	"let g:neocomplete#enable_auto_select = 1
-	"let g:neocomplete#disable_auto_complete = 1
-	"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+	" " Shell like behavior(not recommended).
+	" "set completeopt+=longest
+	" "let g:neocomplete#enable_auto_select = 1
+	" "let g:neocomplete#disable_auto_complete = 1
+	" "inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
 
-	" Enable omni completion.
-	autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-	autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-	autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-	autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+	" " Enable omni completion.
+	" autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+	" autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+	" autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+	" autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+	" autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
-	" Enable heavy omni completion.
-	if !exists('g:neocomplete#sources#omni#input_patterns')
-	  let g:neocomplete#sources#omni#input_patterns = {}
-	endif
-	"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-	"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-	"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+	" " Enable heavy omni completion.
+	" if !exists('g:neocomplete#sources#omni#input_patterns')
+	"   let g:neocomplete#sources#omni#input_patterns = {}
+	" endif
+	" "let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+	" "let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+	" "let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 
-	" For perlomni.vim setting.
-	" https://github.com/c9s/perlomni.vim
-	let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'     
-
-
+	" " For perlomni.vim setting.
+	" " https://github.com/c9s/perlomni.vim
+	" let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'     
 
 
-	"tagbar
+	"----------tagbar-----------------
 	let g:tagbar_type_go = {
 		\ 'ctagstype' : 'go',
 		\ 'kinds'     : [
@@ -411,3 +553,98 @@
 		\ 'ctagsargs' : '-sort -silent'
 	\ }
 	nmap <F8> :TagbarToggle<CR>
+
+	"--------------syntastic
+
+	" Syntastic {{{
+
+	let g:syntastic_always_populate_loc_list = 1
+	let g:syntastic_auto_loc_list = 0
+	let g:syntastic_check_on_open = 0
+	let g:syntastic_check_on_wq = 1
+	" let g:syntastic_enable_signs = 1
+	" let g:syntastic_enable_baloon = 1
+	" let g:syntastic_java_checkers = ['javac']
+	" let g:syntastic_python_checkers = ['flake8']
+	" let g:syntastic_style_error_symbol = 'E>'
+	" let g:syntastic_style_warning_symbol = 'W>'
+	" let g:syntastic_mode_map = {
+	" 			\ "mode": "active",
+	" 			\ "active_filetypes": [],
+	" 			\ "passive_filetypes": ['java', 'html', 'rst']
+	" 			\ }
+	" let g:syntastic_stl_format = '[%E{%e Errors}%B{, }%W{%w Warnings}]'
+
+	nnoremap <leader>C :SyntasticCheck<cr>
+	set statusline+=%#warningmsg#
+	set statusline+=%{SyntasticStatuslineFlag()}
+	set statusline+=%*
+	set statusline+=%{fugitive#statusline()}
+
+	" }}}
+
+	"---------------indentline
+	let g:indentLine_enabled = 1	
+
+	"autopep8设置"
+	" let g:autopep8_disable_show_diff=1
+
+	"auto-pairs
+	" let g:AutoPairsFlyMode = 1
+	" let g:AutoPairsShortcutBackInsert = 'b'
+	" let g:AutoPairsShortcutToggle = ';-p'
+	" let g:AutoPairsShortcutFastWrap = ';-e'
+	" let g:AutoPairsShortcutJump = ';-n'
+	
+	" delimitMate for python docstring ", 特别有用
+	au FileType python let b:delimitMate_nesting_quotes = ['"']
+	" 关闭某些类型文件的自动补全
+	au FileType mail let b:delimitMate_autoclose = 0
+
+	"-----python-mode
+	" Override go-to.definition key shortcut to Ctrl-]
+	let g:pymode_rope_goto_definition_bind = "<C-]>"
+	
+	" Override run current python file key shortcut to Ctrl-Shift-e
+	" let g:pymode_run_bind = "<C-S-e>"
+	
+	" Override view python doc key shortcut to Ctrl-Shift-d
+	let g:pymode_doc_bind = "<C-S-d>"
+	let g:pymode_python = 'python3'
+
+	" Avoid conflicting with YouCompleteMe
+	let g:pymode_rope_completion = 0 
+
+	let g:powerline_pycmd = "py3"
+	let g:powerline_pyeval = "py3eval"
+
+	" Syntax Options {{{
+	" let g:pymode_syntax = 1
+	" let g:pymode_syntax_all = 1
+	" let g:pymode_syntax_builtin_objs = 1
+	" let g:pymode_syntax_print_as_function = 0
+	" let g:pymode_syntax_space_errors = 0
+	" }}}
+	
+	" Lint Options {{{
+	let g:pymode_lint = 1
+	let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'pep257']
+	
+	nnoremap <leader>L :PymodeLint
+	" }}}
+	
+	"------- emmet
+	let g:user_emmet_install_global = 0
+	autocmd FileType html,css EmmetInstall
+
+	"----color scheme
+	if has('gui_running') 
+		set background=dark 
+		" colorscheme solarized 
+		" call togglebg#map("") 
+		colorscheme molokai 
+	else 
+		colorscheme solarized 
+		" colorscheme molokai 
+		" colorscheme zenburn 
+	endif	
