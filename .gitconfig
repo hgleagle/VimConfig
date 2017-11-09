@@ -1,0 +1,7 @@
+[user]
+	email = hgleagle@sina.com.cn
+	name = heguilong
+[merge]
+	tool = vimdiff
+[core]
+	editor = vim
