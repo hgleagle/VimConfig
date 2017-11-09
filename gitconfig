@@ -1,7 +1,14 @@
 [user]
-	email = hgleagle@sina.com.cn
-	name = heguilong
+	email = hgleagle@gmail.com
+	name = hgleagle
 [merge]
 	tool = vimdiff
 [core]
 	editor = vim
+[push]
+	default = matching
+[color]
+	status = auto
+	branch = auto
+[credential]
+	helper = cache

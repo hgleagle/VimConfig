@@ -7,7 +7,9 @@
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="powerline"
+ZSH_THEME="agnoster"
+# ZSH_THEME="avit"
+# ZSH_THEME="powerline"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -83,13 +85,53 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+#DEFAULT_USER="$(whoami)"
+# prompt_context() {
+#   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
+#       prompt_segment black default "%(!.%{%F{yellow}%}.)$USER"
+#     fi
+# }
+prompt_context() { }
+eval `dircolors ~/.dir_colors/dircolors`
+# alias -s py=vim
 alias sshvps="ssh -p 22 heguilong@172.18.34.187"
 alias sshvultr="ssh -p 22 root@45.76.105.22"
+# alias sshgcp="ssh -p 2345 root@104.155.213.151"
+alias sshgcp="ssh -p 22 root@35.200.31.174 -i ~/.ssh/gcp_rsa"
 alias sshrpi="ssh -p 22 rxhf@192.168.195.230"
 export http_proxy="127.0.0.1:8118"
 export https_proxy="127.0.0.1:8118"
 [	-f	~/.bashrc_docker	]	&&	.	~/.bashrc_docker
 export GOPATH=/home/hgl/gowork
 export PATH=$PATH:$GOPATH/bin
-tmux attach -t base || tmux new -s base
-keynav
+export BAKE_HOME=`pwd`/bake 
+export PATH=$HOME/.local/bin:$PATH:$BAKE_HOME
+export PYTHONPATH=$PYTHONPATH:$BAKE_HOME
+# source ~/.autoenv/activate.sh
+export WORKON_HOME=~/Envs
+source /usr/local/bin/virtualenvwrapper.sh
+# export VIRTUALENV_PYTHON=/usr/bin/python3
+#synergy &
+eval 
+            fuck () {
+                TF_PREVIOUS=$(fc -ln -1 | tail -n 1);
+                TF_CMD=$(
+                    TF_ALIAS=fuck
+                    TF_SHELL_ALIASES=$(alias)
+                    PYTHONIOENCODING=utf-8
+                    thefuck $TF_PREVIOUS THEFUCK_ARGUMENT_PLACEHOLDER $*
+                ) && eval $TF_CMD;
+                test -n "$TF_CMD" && print -s $TF_CMD
+            }
+        
+# tmux attach -t base || tmux new -s base
+# keynav
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+alias prp="pipenv run python"
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

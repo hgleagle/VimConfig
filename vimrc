@@ -18,11 +18,8 @@
 	Plugin 'Valloric/YouCompleteMe'
 	Plugin 'ctrlpvim/ctrlp.vim'
 	Plugin 'scrooloose/nerdtree'
-	Plugin 'vim-syntastic/syntastic'
-	Plugin 'Yggdroot/indentLine' " vertical indentline
-	"Plugin 'jiangmiao/auto-pairs'
-	"Plugin 'vim-scripts/simple-pairs'
-	Plugin 'Raimondi/delimitMate'
+	Plugin 'ervandew/supertab'
+	Plugin 'easymotion/vim-easymotion'
 
 	" Track the engine.
 	Plugin 'SirVer/ultisnips'
@@ -32,10 +29,27 @@
 	"from <<practical vim>>
 	Plugin 'bronson/vim-visual-star-search'
 	Plugin 'tpope/vim-fugitive' "git wrapper
-	Plugin 'tpope/vim-commentary' "gc 
+	" Plugin 'tpope/vim-commentary' "gc 
 	Plugin 'tpope/vim-surround'
 	Plugin 'tpope/vim-unimpaired' "[l [q [b [a [t
 	Plugin 'tpope/tpope-vim-abolish' "super substitute，Subvert
+
+	" Beautify
+	Plugin 'plasticboy/vim-markdown'
+	"Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+	Plugin 'vim-airline/vim-airline'
+	Plugin 'vim-airline/vim-airline-themes'
+	Plugin 'kien/rainbow_parentheses.vim'
+
+	" for language
+    Plugin 'fatih/vim-go'
+	Plugin 'mattn/emmet-vim'
+	Plugin 'vim-syntastic/syntastic'
+	Plugin 'scrooloose/nerdcommenter'
+	Plugin 'Yggdroot/indentLine' " vertical indentline
+	"Plugin 'jiangmiao/auto-pairs'
+	"Plugin 'vim-scripts/simple-pairs'
+	Plugin 'Raimondi/delimitMate'
 
 	"for python
 	Plugin 'python-mode/python-mode'
@@ -43,16 +57,10 @@
 	"Plugin 'vim-scripts/indentpython.vim'
 	"Plugin 'tell-k/vim-autopep8'
 
-	Plugin 'plasticboy/vim-markdown'
-	Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
-    Plugin 'fatih/vim-go'
-	Plugin 'mattn/emmet-vim'
-
 	"scheme
 	Plugin 'jnurmine/Zenburn'
 	Plugin 'altercation/vim-colors-solarized'
 	Plugin 'tomasr/molokai'
-
 
     " plugin from http://vim-scripts.org/vim/scripts.html
 	Plugin 'python_match.vim'
@@ -90,7 +98,8 @@
     colorscheme ron        " elflord ron peachpuff default 设置配色方案，vim自带的配色方案保存在/usr/share/vim/vim72/colors目录下
 
     " detect file type
-    " filetype on
+	filetype on
+	" 根据侦测到的不同类型加载对应的插件
     filetype plugin on
 	"runtime macros/matchit.vim "keyword jump
 	"packadd! matchit
@@ -323,11 +332,11 @@
 	" endfunction
 	
     " -- MiniBufferExplorer --
-    let g:miniBufExplMapWindowNavVim = 1 " 按下Ctrl+h/j/k/l，可以切换到当前窗口的上下左右窗口
-    let g:miniBufExplMapWindowNavArrows = 1 " 按下Ctrl+箭头，可以切换到当前窗口的上下左右窗口
-    let g:miniBufExplMapCTabSwitchBufs = 1 " 启用以下两个功能：Ctrl+tab移到下一个buffer并在当前窗口打开；Ctrl+Shift+tab移到上一个buffer并在当前窗口打开；ubuntu好像不支持
-    "let g:miniBufExplMapCTabSwitchWindows = 1 " 启用以下两个功能：Ctrl+tab移到下一个窗口；Ctrl+Shift+tab移到上一个窗口；ubuntu好像不支持
-    let g:miniBufExplModSelTarget = 1    " 不要在不可编辑内容的窗口（如TagList窗口）中打开选中的buffer
+	let g:miniBufExplMapWindowNavVim = 1 " 按下Ctrl+h/j/k/l，可以切换到当前窗口的上下左右窗口
+	let g:miniBufExplMapWindowNavArrows = 1 " 按下Ctrl+箭头，可以切换到当前窗口的上下左右窗口
+	let g:miniBufExplMapCTabSwitchBufs = 1 " 启用以下两个功能：Ctrl+tab移到下一个buffer并在当前窗口打开；Ctrl+Shift+tab移到上一个buffer并在当前窗口打开；ubuntu好像不支持
+	"let g:miniBufExplMapCTabSwitchWindows = 1 " 启用以下两个功能：Ctrl+tab移到下一个窗口；Ctrl+Shift+tab移到上一个窗口；ubuntu好像不支持
+	let g:miniBufExplModSelTarget = 1    " 不要在不可编辑内容的窗口（如TagList窗口）中打开选中的buffer
 	
 	let mapleader = ","
 	nmap <silent> <leader>e :edit ~/.vimrc<CR>
@@ -443,11 +452,15 @@
 	" Trigger configuration. Do not use <tab> if you use
 	" https://github.com/Valloric/YouCompleteMe.
 	let g:UltiSnipsExpandTrigger="<tab>"
-	let g:UltiSnipsJumpForwardTrigger="<c-b>"
-	let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+	let g:UltiSnipsJumpForwardTrigger="<leader><tab>"
+	let g:UltiSnipsJumpBackwardTrigger="<leader><s-tab>"
 
 	" If you want :UltiSnipsEdit to split your window.
 	let g:UltiSnipsEditSplit="vertical"
+
+	let g:snips_author = "heguilong"
+	let g:snips_email = "hgleagle@gmail.com"
+	let g:snips_github = "https://github.com/hgleagle"
 	
 	" "----------neocomplete
 	" "Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
@@ -630,7 +643,10 @@
 	let g:pymode_lint = 1
 	let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'pep257']
 	
-	nnoremap <leader>L :PymodeLint
+	nnoremap <leader>L :PymodeLintAuto
+
+	"autocmd FileType python noremap <buffer> <leader>8 :call Autopep8()<CR>
+
 	" }}}
 	
 	"------- emmet
@@ -648,3 +664,20 @@
 		" colorscheme molokai 
 		" colorscheme zenburn 
 	endif	
+
+	"--------- rainbow_parentheses.vim
+	let g:rbpt_colorpairs = [ ['brown', 'RoyalBlue3'], ['Darkblue', 'SeaGreen3'], ['darkgray', 'DarkOrchid3'], ['darkgreen', 'firebrick3'],['darkcyan', 'RoyalBlue3'],['darkred', 'SeaGreen3'],['darkmagenta', 'DarkOrchid3'],['brown', 'firebrick3'],['gray', 'RoyalBlue3'],['black',       'SeaGreen3'],['darkmagenta', 'DarkOrchid3'],['Darkblue',  'firebrick3'],['darkgreen', 'RoyalBlue3'],['darkcyan', 'SeaGreen3'],['darkred', 'DarkOrchid3'],['red', 'firebrick3']]
+	let g:rbpt_max = 16
+	"au VimEnter * RainbowParenthesesToggle
+	"au Syntax * RainbowParenthesesLoadRound
+	"au Syntax * RainbowParenthesesLoadSquare
+	"au Syntax * RainbowParenthesesLoadBraces
+	"
+	"
+	"------airline
+	"let g:airline#extensions#tabline#enabled = 1
+	"let g:airline#extensions#tabline#left_sep = ' '
+	"let g:airline#extensions#tabline#left_alt_sep = '|'
+	let g:airline_powerline_fonts = 1
+	let g:airline#extensions#syntastic#enabled = 1
+	let g:airline_theme="deus"
